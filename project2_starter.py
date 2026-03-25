@@ -99,6 +99,60 @@ def get_listing_details(listing_id) -> dict:
     # ==============================
     # YOUR CODE STARTS HERE
     # ==============================
+    base_dir = os.path.abspath(os.path.dirname(__file__))
+    file_path = os.path.join(base_dir, "html_files", f"listing_{listing_id}.html")
+
+    with open(file_path, "r", encoding="utf-8-sig") as f:
+        soup = BeautifulSoup(f, "html.parser")
+
+    text = soup.get_text(" ", strip=True)
+
+    # --- Policy Number ---
+    policy_number = "Pending"
+    if "Exempt" in text:
+        policy_number = "Exempt"
+    else:
+        match = re.search(r"(20\d{2}-00\d{4}STR|STR-\d{7})", text)
+        if match:
+            policy_number = match.group(1)
+
+    # --- Host Type ---
+    host_type = "Superhost" if "Superhost" in text else "regular"
+
+    # --- Host Name ---
+    host_name = "Unknown"
+    host_match = re.search(r"Hosted by ([A-Za-z &]+)", text)
+    if host_match:
+        host_name = host_match.group(1).strip()
+
+    # --- Room Type ---
+    subtitle = ""
+    h1 = soup.find("h1")
+    if h1:
+        subtitle = h1.get_text()
+
+    if "Private" in subtitle:
+        room_type = "Private Room"
+    elif "Shared" in subtitle:
+        room_type = "Shared Room"
+    else:
+        room_type = "Entire Room"
+
+    # --- Location Rating ---
+    location_rating = 0.0
+    rating_match = re.search(r"Location\s*([0-9]\.[0-9])", text)
+    if rating_match:
+        location_rating = float(rating_match.group(1))
+
+    return {
+        listing_id: {
+            "policy_number": policy_number,
+            "host_type": host_type,
+            "host_name": host_name,
+            "room_type": room_type,
+            "location_rating": location_rating
+        }
+    }
     pass
     # ==============================
     # YOUR CODE ENDS HERE
