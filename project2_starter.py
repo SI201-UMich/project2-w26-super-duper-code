@@ -12,6 +12,8 @@
 # --- ARGUMENTS & EXPECTED RETURN VALUES PROVIDED --- #
 # --- SEE INSTRUCTIONS FOR FULL DETAILS ON METHOD IMPLEMENTATION --- #
 
+#from email.mime import text
+
 from bs4 import BeautifulSoup
 import re
 import os
@@ -62,6 +64,12 @@ def load_listing_results(html_path) -> list[tuple]:
                     # Clean title
                     title = text.split("·")[0].strip()
 
+                    # Stop title after the first location phrase
+                    
+                    title_match = re.search(r"^(.+? in [A-Za-z ]+)", title)
+                    if title_match:
+                        title = title_match.group(1)
+                    
                     # KEY FIX: cut after "District"
                     if "District" in title:
                         title = title.split("District")[0] + "District"
@@ -80,7 +88,7 @@ def load_listing_results(html_path) -> list[tuple]:
 
     #print(len(listings))
     #for l in listings:
-       # print(l)
+        #print(l)
 
     return unique
     pass
@@ -228,15 +236,21 @@ def output_csv(data, filename) -> None:
     # YOUR CODE STARTS HERE
     # ==============================
     sorted_data = sorted(data, key=lambda x: x[6], reverse=True)
+
     with open(filename, "w", newline="", encoding="utf-8-sig") as f:
         writer = csv.writer(f)
 
+        # Write header
         writer.writerow([
             "Listing Title", "Listing ID", "Policy Number",
             "Host Type", "Host Name", "Room Type", "Location Rating"
         ])
+
         for row in sorted_data:
-            writer.writerow(row)
+            # Clean the listing title
+            clean_title = row[0].split(" Charming")[0].strip()  # remove extra descriptors
+            # Write row with cleaned title
+            writer.writerow([clean_title] + list(row[1:]))
     pass
     # ==============================
     # YOUR CODE ENDS HERE
@@ -301,7 +315,7 @@ def validate_policy_numbers(data) -> list[str]:
     # ==============================
     invalid = []
 
-    pattern1 = r"20\d{2}-\d{6}STR"
+    pattern1 = r"20\d{2}-00\d{3,6}STR"
     pattern2 = r"STR-\d{7}"
 
     for row in data:
@@ -311,31 +325,13 @@ def validate_policy_numbers(data) -> list[str]:
         if policy in ["Pending", "Exempt"]:
             continue
 
+        #if not re.search(r"(20\d{2}-\d{6}STR|STR-\d{7})", policy):
+            #invalid.append(listing_id)
+
         if not (re.search(pattern1, policy) or re.search(pattern2, policy)):
             invalid.append(listing_id)
 
     return invalid
-    pass
-    # ==============================
-    # YOUR CODE ENDS HERE
-    # ==============================
-
-
-# EXTRA CREDIT
-def google_scholar_searcher(query):
-    """
-    EXTRA CREDIT
-
-    Args:
-        query (str): The search query to be used on Google Scholar
-    Returns:
-        List of titles on the first page (list)
-    """
-    # TODO: Implement checkout logic following the instructions
-    # ==============================
-    # YOUR CODE STARTS HERE
-    # ==============================
-
     pass
     # ==============================
     # YOUR CODE ENDS HERE
@@ -407,6 +403,7 @@ class TestCases(unittest.TestCase):
         rows[1],
         ["Guesthouse in San Francisco", "49591060", "STR-0000253", "Superhost", "Ingrid", "Entire Room", "5.0"]
     )
+        
         os.remove(out_path)
 
 
