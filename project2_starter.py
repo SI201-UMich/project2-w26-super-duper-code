@@ -45,50 +45,45 @@ def load_listing_results(html_path) -> list[tuple]:
     # ==============================
     with open(html_path, "r", encoding="utf-8-sig") as f:
         soup = BeautifulSoup(f, "html.parser")
-
+    
     listings = []
 
     for a in soup.find_all("a", href=True):
         href = a["href"]
-
         if "/rooms/" in href:
             match = re.search(r"/rooms/(\d+)", href)
-            if match:
-                listing_id = match.group(1)
+            if not match:
+                continue
+            listing_id = match.group(1)
 
-                # Get nearby text
+            # Use the a tag text itself for title
+            text = a.get_text(" ", strip=True)
+
+            # Sometimes text may be empty, fallback to parent
+            if not text:
                 parent = a.find_parent()
                 if parent:
                     text = parent.get_text(" ", strip=True)
 
-                    # Clean title
+            # Clean up extra descriptors after "in"
+            if " in " in text:
+                # Keep up to the first "District" or full phrase
+                if "District" in text:
+                    title = text.split("District")[0] + "District"
+                else:
                     title = text.split("·")[0].strip()
+            else:
+                title = text.split("·")[0].strip()
 
-                    # Stop title after the first location phrase
-                    
-                    title_match = re.search(r"^(.+? in [A-Za-z ]+)", title)
-                    if title_match:
-                        title = title_match.group(1)
-                    
-                    # KEY FIX: cut after "District"
-                    if "District" in title:
-                        title = title.split("District")[0] + "District"
+            listings.append((title, listing_id))
 
-                    # Only keep real titles
-                    if " in " in title:
-                        listings.append((title, listing_id))
-
-    # remove duplicates
+    # Remove duplicates by listing_id
     unique = []
     seen = set()
     for item in listings:
         if item[1] not in seen:
             unique.append(item)
             seen.add(item[1])
-
-    #print(len(listings))
-    #for l in listings:
-        #print(l)
 
     return unique
     pass
@@ -127,14 +122,20 @@ def get_listing_details(listing_id) -> dict:
         soup = BeautifulSoup(f, "html.parser")
 
     text = soup.get_text(" ", strip=True)
+
     # --- Policy Number ---
     policy_number = "Pending"
     if "Exempt" in text:
         policy_number = "Exempt"
     else:
-        match = re.search(r"(20\d{2}-00\d{4}STR|STR-\d{7})", text)
+        match = re.search(r"(20\d{2}-\d{6}STR|STR-\d{7})", text)
         if match:
             policy_number = match.group(1)
+        else:
+            # If no match, fallback to what's in the text (like 16204265)
+            fallback_match = re.search(r"Policy number[: ]*(\S+)", text)
+            if fallback_match:
+                policy_number = fallback_match.group(1)
 
     # --- Host Type ---
     host_type = "Superhost" if "Superhost" in text else "regular"
@@ -144,9 +145,9 @@ def get_listing_details(listing_id) -> dict:
     host_match = re.search(r"Hosted by ([A-Za-z &]+)", text)
     if host_match:
         host_name = host_match.group(1).strip()
+        if "Joined" in host_name:
+            host_name = host_name.split("Joined")[0].strip()
 
-    if "Joined" in host_name:
-        host_name = host_name.split("Joined")[0].strip()
     # --- Room Type ---
     subtitle = ""
     h1 = soup.find("h1")
@@ -314,21 +315,22 @@ def validate_policy_numbers(data) -> list[str]:
     # YOUR CODE STARTS HERE
     # ==============================
     invalid = []
-
-    pattern1 = r"20\d{2}-00\d{3,6}STR"
+    pattern1 = r"20\d{2}-00\d{4,6}STR"
     pattern2 = r"STR-\d{7}"
 
     for row in data:
         listing_id = row[1]
         policy = row[2]
-
         if policy in ["Pending", "Exempt"]:
             continue
+        if not (re.fullmatch(pattern1, policy) or re.fullmatch(pattern2, policy)):
+            invalid.append(listing_id)
 
         #if not re.search(r"(20\d{2}-\d{6}STR|STR-\d{7})", policy):
             #invalid.append(listing_id)
 
         if not (re.search(pattern1, policy) or re.search(pattern2, policy)):
+            print(listing_id, policy)
             invalid.append(listing_id)
 
     return invalid
