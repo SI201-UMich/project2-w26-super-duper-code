@@ -1,7 +1,7 @@
 # SI 201 HW4 (Library Checkout System)
-# Your name: Nahida Sultana
-# Your student id: 11038752
-# Your email: nahidas@umich.edu
+# Your name: Nahida Sultana, Mischa Rafferty
+# Your student id: 11038752, 7593 8200
+# Your email: nahidas@umich.edu, msraff@umich.edu
 # Who or what you worked with on this homework (including generative AI like ChatGPT):
 # If you worked with generative AI also add a statement for how you used it.
 # e.g.:
