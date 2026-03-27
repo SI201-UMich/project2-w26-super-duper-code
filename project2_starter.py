@@ -61,7 +61,7 @@ def load_listing_results(html_path) -> list[tuple]:
 
         listing_id = match.group(1)
         if listing_id in seen_ids:
-            continue`
+            continue
 
         text = a.get_text(strip=True)
 
