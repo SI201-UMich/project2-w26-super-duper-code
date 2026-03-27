@@ -79,7 +79,7 @@ def load_listing_results(html_path) -> list[tuple]:
             listings.append((title, listing_id))
             seen_ids.add(listing_id)
         
-        return listings
+    return listings
     
     
     # ==============================
