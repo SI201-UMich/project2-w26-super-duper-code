@@ -48,23 +48,43 @@ def load_listing_results(html_path) -> list[tuple]:
         soup = BeautifulSoup(f, "html.parser")
     
     listings = []
+    seen_ids = set()
 
     for a in soup.find_all("a", href=True):
         href = a["href"]
         if "/rooms/" in href:
             match = re.search(r"/rooms/(\d+)", href)
-            if not match:
-                continue
-            listing_id = match.group(1)
+            if match:
+                listing_id = match.group(1)
 
             # Use the a tag text itself for title
-            text = a.get_text(" ", strip=True)
+                if listing_id in seen_ids:
+                    continue
+
+            title = a.get_text(strip=True)
 
             # Sometimes text may be empty, fallback to parent
-            if not text:
-                parent = a.find_parent()
-                if parent:
-                    text = parent.get_text(" ", strip=True)
+        if not title:
+            parent = a.find_parent()
+            if parent:
+                title_elem = parent.find (['h1', 'h2', 'h3', 'div'], class_=re.compile(r'title|heading|name'))
+                if title_elem:
+                    title = title_elem.get_text(strip=True)
+                else:
+                    title = parent.get_text(strip=True)
+
+        if title:
+            if "·" in title:
+                title = title.split("·")[0].strip()
+            if " in " in title and "District" in title:
+                        
+                pass 
+                
+        if title and listing_id:
+            listings.append((title, listing_id))
+            seen_ids.add(listing_id)
+            
+    return listings
 
             # Clean up extra descriptors after "in"
             if " in " in text:
@@ -88,7 +108,10 @@ def load_listing_results(html_path) -> list[tuple]:
 
     return unique
     
+<<<<<<< HEAD
     
+=======
+>>>>>>> fdb8fbbd0c40052d4537a4c04b550a97873d695d
     # ==============================
     # YOUR CODE ENDS HERE
     # ==============================
