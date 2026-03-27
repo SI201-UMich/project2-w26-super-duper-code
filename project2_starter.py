@@ -87,11 +87,8 @@ def load_listing_results(html_path) -> list[tuple]:
             seen.add(item[1])
 
     return unique
-<<<<<<< HEAD
     
-=======
-    #pass
->>>>>>> 972f3fa673a019fccde324c9942c54ae1cb9729d
+    
     # ==============================
     # YOUR CODE ENDS HERE
     # ==============================
@@ -180,11 +177,7 @@ def get_listing_details(listing_id) -> dict:
             "location_rating": location_rating
         }
     }
-<<<<<<< HEAD
     
-=======
-    #pass
->>>>>>> 972f3fa673a019fccde324c9942c54ae1cb9729d
     # ==============================
     # YOUR CODE ENDS HERE
     # ==============================
@@ -221,11 +214,7 @@ def create_listing_database(html_path) -> list[tuple]:
             details["location_rating"]
         ))
     return database
-<<<<<<< HEAD
     
-=======
-    #pass
->>>>>>> 972f3fa673a019fccde324c9942c54ae1cb9729d
     # ==============================
     # YOUR CODE ENDS HERE
     # ==============================
@@ -303,11 +292,7 @@ def avg_location_rating_by_room_type(data) -> dict:
     for room_type in totals:
         averages[room_type] = round(totals[room_type] / counts[room_type], 1)
     return averages
-<<<<<<< HEAD
     
-=======
-    #pass
->>>>>>> 972f3fa673a019fccde324c9942c54ae1cb9729d
     # ==============================
     # YOUR CODE ENDS HERE
     # ==============================
@@ -332,27 +317,17 @@ def validate_policy_numbers(data) -> list[str]:
     pattern1 = r"20\d{2}-00\d{3,6}STR"
     pattern2 = r"STR-\d{7}$"
 
-    for row in data:
-        listing_id = row[1]
-        policy = row[2]
+    for listing in data: 
+        listing_id = listing[1]
+        policy = listing[2]
         if policy in ["Pending", "Exempt"]:
             continue
         if not (re.fullmatch(pattern1, policy) or re.fullmatch(pattern2, policy)):
             invalid.append(listing_id)
 
-        #if not re.search(r"(20\d{2}-\d{6}STR|STR-\d{7})", policy):
-            #invalid.append(listing_id)
-
-        if not (re.search(pattern1, policy) or re.search(pattern2, policy)):
-            print(listing_id, policy)
-            invalid.append(listing_id)
-
+        
     return invalid
-<<<<<<< HEAD
     
-=======
-    #pass
->>>>>>> 972f3fa673a019fccde324c9942c54ae1cb9729d
     # ==============================
     # YOUR CODE ENDS HERE
     # ==============================
@@ -373,11 +348,7 @@ class TestCases(unittest.TestCase):
 
         # TODO: Check that the number of listings extracted is 18.
         # TODO: Check that the FIRST (title, id) tuple is  ("Loft in Mission District", "1944564").
-<<<<<<< HEAD
         
-=======
-
->>>>>>> 972f3fa673a019fccde324c9942c54ae1cb9729d
         self.assertEqual(len(self.listings), 18)
         self.assertEqual(self.listings[0], ("Loft in Mission District", "1944564"))
         #pass    
@@ -396,11 +367,7 @@ class TestCases(unittest.TestCase):
         self.assertEqual(results[2]["1944564"]["host_type"], "Superhost")
         self.assertEqual(results[2]["1944564"]["room_type"], "Entire Room")
         self.assertEqual(results[2]["1944564"]["location_rating"], 4.9)
-<<<<<<< HEAD
         
-=======
-        #pass
->>>>>>> 972f3fa673a019fccde324c9942c54ae1cb9729d
 
     def test_create_listing_database(self):
         # TODO: Check that each tuple in detailed_data has exactly 7 elements:
@@ -414,11 +381,7 @@ class TestCases(unittest.TestCase):
             self.detailed_data[-1],
         ("Guest suite in Mission District", "467507", "STR-0005349", "Superhost", "Jennifer", "Entire Room", 4.8)
     )
-<<<<<<< HEAD
         
-=======
-        #pass
->>>>>>> 972f3fa673a019fccde324c9942c54ae1cb9729d
 
     def test_output_csv(self):
         out_path = os.path.join(self.base_dir, "test.csv")
@@ -455,11 +418,7 @@ class TestCases(unittest.TestCase):
         # TODO: Check that the list contains exactly "16204265" for this dataset.
         invalid_listings = validate_policy_numbers(self.detailed_data)
         self.assertEqual(invalid_listings, ["16204265"])
-<<<<<<< HEAD
         
-=======
-        #pass
->>>>>>> 972f3fa673a019fccde324c9942c54ae1cb9729d
 
 
 def main():
