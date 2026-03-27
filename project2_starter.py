@@ -71,6 +71,10 @@ def load_listing_results(html_path) -> list[tuple]:
         
         return listings
     
+<<<<<<< HEAD
+    
+=======
+>>>>>>> fdb8fbbd0c40052d4537a4c04b550a97873d695d
     # ==============================
     # YOUR CODE ENDS HERE
     # ==============================
@@ -299,21 +303,15 @@ def validate_policy_numbers(data) -> list[str]:
     pattern1 = r"20\d{2}-00\d{3,6}STR"
     pattern2 = r"STR-\d{7}$"
 
-    for row in data:
-        listing_id = row[1]
-        policy = row[2]
+    for listing in data: 
+        listing_id = listing[1]
+        policy = listing[2]
         if policy in ["Pending", "Exempt"]:
             continue
         if not (re.fullmatch(pattern1, policy) or re.fullmatch(pattern2, policy)):
             invalid.append(listing_id)
 
-        #if not re.search(r"(20\d{2}-\d{6}STR|STR-\d{7})", policy):
-            #invalid.append(listing_id)
-
-        if not (re.search(pattern1, policy) or re.search(pattern2, policy)):
-            print(listing_id, policy)
-            invalid.append(listing_id)
-
+        
     return invalid
     
     # ==============================
