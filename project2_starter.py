@@ -48,7 +48,10 @@ def load_listing_results(html_path) -> list[tuple]:
         soup = BeautifulSoup(f, "html.parser")
     
     listings = []
+<<<<<<< HEAD
     seen_ids = set()
+=======
+>>>>>>> 972f3fa673a019fccde324c9942c54ae1cb9729d
 
     for a in soup.find_all("a", href=True):
         href = a["href"]
