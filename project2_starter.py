@@ -48,27 +48,43 @@ def load_listing_results(html_path) -> list[tuple]:
         soup = BeautifulSoup(f, "html.parser")
     
     listings = []
-<<<<<<< HEAD
-    seen_ids = 
-=======
->>>>>>> 972f3fa673a019fccde324c9942c54ae1cb9729d
+    seen_ids = set()
 
     for a in soup.find_all("a", href=True):
         href = a["href"]
         if "/rooms/" in href:
             match = re.search(r"/rooms/(\d+)", href)
-            if not match:
-                continue
-            listing_id = match.group(1)
+            if match:
+                listing_id = match.group(1)
 
             # Use the a tag text itself for title
-            text = a.get_text(" ", strip=True)
+                if listing_id in seen_ids:
+                    continue
+
+            title = a.get_text(strip=True)
 
             # Sometimes text may be empty, fallback to parent
-            if not text:
-                parent = a.find_parent()
-                if parent:
-                    text = parent.get_text(" ", strip=True)
+        if not title:
+            parent = a.find_parent()
+            if parent:
+                title_elem = parent.find (['h1', 'h2', 'h3', 'div'], class_=re.compile(r'title|heading|name'))
+                if title_elem:
+                    title = title_elem.get_text(strip=True)
+                else:
+                    title = parent.get_text(strip=True)
+
+        if title:
+            if "·" in title:
+                title = title.split("·")[0].strip()
+            if " in " in title and "District" in title:
+                        
+                pass 
+                
+        if title and listing_id:
+            listings.append((title, listing_id))
+            seen_ids.add(listing_id)
+            
+    return listings
 
             # Clean up extra descriptors after "in"
             if " in " in text:
@@ -91,11 +107,7 @@ def load_listing_results(html_path) -> list[tuple]:
             seen.add(item[1])
 
     return unique
-<<<<<<< HEAD
     
-=======
-    #pass
->>>>>>> 972f3fa673a019fccde324c9942c54ae1cb9729d
     # ==============================
     # YOUR CODE ENDS HERE
     # ==============================
@@ -184,11 +196,7 @@ def get_listing_details(listing_id) -> dict:
             "location_rating": location_rating
         }
     }
-<<<<<<< HEAD
     
-=======
-    #pass
->>>>>>> 972f3fa673a019fccde324c9942c54ae1cb9729d
     # ==============================
     # YOUR CODE ENDS HERE
     # ==============================
@@ -225,11 +233,7 @@ def create_listing_database(html_path) -> list[tuple]:
             details["location_rating"]
         ))
     return database
-<<<<<<< HEAD
     
-=======
-    #pass
->>>>>>> 972f3fa673a019fccde324c9942c54ae1cb9729d
     # ==============================
     # YOUR CODE ENDS HERE
     # ==============================
@@ -307,11 +311,7 @@ def avg_location_rating_by_room_type(data) -> dict:
     for room_type in totals:
         averages[room_type] = round(totals[room_type] / counts[room_type], 1)
     return averages
-<<<<<<< HEAD
     
-=======
-    #pass
->>>>>>> 972f3fa673a019fccde324c9942c54ae1cb9729d
     # ==============================
     # YOUR CODE ENDS HERE
     # ==============================
@@ -352,11 +352,7 @@ def validate_policy_numbers(data) -> list[str]:
             invalid.append(listing_id)
 
     return invalid
-<<<<<<< HEAD
     
-=======
-    #pass
->>>>>>> 972f3fa673a019fccde324c9942c54ae1cb9729d
     # ==============================
     # YOUR CODE ENDS HERE
     # ==============================
@@ -377,11 +373,7 @@ class TestCases(unittest.TestCase):
 
         # TODO: Check that the number of listings extracted is 18.
         # TODO: Check that the FIRST (title, id) tuple is  ("Loft in Mission District", "1944564").
-<<<<<<< HEAD
         
-=======
-
->>>>>>> 972f3fa673a019fccde324c9942c54ae1cb9729d
         self.assertEqual(len(self.listings), 18)
         self.assertEqual(self.listings[0], ("Loft in Mission District", "1944564"))
         #pass    
@@ -400,11 +392,7 @@ class TestCases(unittest.TestCase):
         self.assertEqual(results[2]["1944564"]["host_type"], "Superhost")
         self.assertEqual(results[2]["1944564"]["room_type"], "Entire Room")
         self.assertEqual(results[2]["1944564"]["location_rating"], 4.9)
-<<<<<<< HEAD
         
-=======
-        #pass
->>>>>>> 972f3fa673a019fccde324c9942c54ae1cb9729d
 
     def test_create_listing_database(self):
         # TODO: Check that each tuple in detailed_data has exactly 7 elements:
@@ -418,11 +406,7 @@ class TestCases(unittest.TestCase):
             self.detailed_data[-1],
         ("Guest suite in Mission District", "467507", "STR-0005349", "Superhost", "Jennifer", "Entire Room", 4.8)
     )
-<<<<<<< HEAD
         
-=======
-        #pass
->>>>>>> 972f3fa673a019fccde324c9942c54ae1cb9729d
 
     def test_output_csv(self):
         out_path = os.path.join(self.base_dir, "test.csv")
@@ -459,11 +443,7 @@ class TestCases(unittest.TestCase):
         # TODO: Check that the list contains exactly "16204265" for this dataset.
         invalid_listings = validate_policy_numbers(self.detailed_data)
         self.assertEqual(invalid_listings, ["16204265"])
-<<<<<<< HEAD
         
-=======
-        #pass
->>>>>>> 972f3fa673a019fccde324c9942c54ae1cb9729d
 
 
 def main():
