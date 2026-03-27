@@ -1,0 +1,15 @@
+Nahida Sultana
+
+
+1. Accountability in the current system
+I believe that San Francisco's present short-term renting arrangement does not offer sufficient accountability. Although it has several layers (hosts registering with the city, Airbnb displaying policy numbers, and third parties harvesting data) these components don't always cooperate well. For instance, we observed that certain listings in this project had either faulty or missing policy numbers, indicating that Airbnb is not consistently enforcing compliance. This makes it possible for hosts to evade rules without facing repercussions right away.
+Furthermore, the system mostly depends on outside companies to use site scraping and reporting to find infractions. Even though Airbnb has the most direct access to listing data, this takes accountability away from the platform itself. The SWE Code of Ethics states that corporations and developers should act in the public interest and make sure their systems are transparent and dependable. Rather than depending on outside enforcement, Airbnb may increase responsibility by automatically confirming policy numbers before permitting properties to go live. The system would be more efficient and equitable if platform-level accountability were strengthened.
+
+2. Legal consideration of web scraping 
+The legality of web scraping is mostly dependent on whether the data is secured by terms of service or login requirements, or if it is freely accessible. In court instances, laws such as the Computer Fraud and Abuse Act (CFAA) have been construed differently, particularly when assessing whether visiting public websites qualifies as "unauthorized access."
+This is significant because, as we demonstrated in this project, online scraping may be used to discover illicit activities and promote transparency, among other crucial public goals. However, scraping may still be illegal if it bypasses technical obstacles or violates a website's terms of service. Therefore, determining whether scraping is legal requires knowledge of both the technological access level (public vs. limited) and the relevant legal agreements.
+
+3. Ethical guidelines for web scraping
+First, respecting user privacy and permission is a crucial rule. People might not anticipate that their data will be gathered, examined, or redistributed on a large scale, even if it is publicly accessible. Scraping should refrain from gathering private information or utilizing it in ways that can endanger people.
+Second, the goal and societal impact of online scraping should be taken into consideration. Instead of being used for manipulation or exploitation, scraping should ideally support a significant public good like accountability, openness, or study. For instance, it is more morally acceptable to use scraping to reveal policy infractions than to create intrusive monitoring systems like Clearview AI.
+In general, ethical online scraping necessitates striking a balance between accountability and information access. Data should not be used without carefully weighing its implications, even if it is readily available.
