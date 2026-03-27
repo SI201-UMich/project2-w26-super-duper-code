@@ -87,7 +87,7 @@ def load_listing_results(html_path) -> list[tuple]:
             seen.add(item[1])
 
     return unique
-    pass
+    #pass
     # ==============================
     # YOUR CODE ENDS HERE
     # ==============================
@@ -129,14 +129,13 @@ def get_listing_details(listing_id) -> dict:
     if "Exempt" in text:
         policy_number = "Exempt"
     else:
-        match = re.search(r"(20\d{2}-\d{6}STR|STR-\d{7})", text)
+        match = re.search(r"(20\d{2}-00\d{4,6}STR|STR-\d{7})", text)
         if match:
             policy_number = match.group(1)
         else:
-            # If no match, fallback to what's in the text (like 16204265)
-            fallback_match = re.search(r"Policy number[: ]*(\S+)", text)
-            if fallback_match:
-                policy_number = fallback_match.group(1)
+            json_match = re.search(r'"title":"Policy number","subtitle":"(\d+)', text)
+            if json_match:
+                policy_number = json_match.group(1)
 
     # --- Host Type ---
     host_type = "Superhost" if "Superhost" in text else "regular"
@@ -177,7 +176,7 @@ def get_listing_details(listing_id) -> dict:
             "location_rating": location_rating
         }
     }
-    pass
+    #pass
     # ==============================
     # YOUR CODE ENDS HERE
     # ==============================
@@ -214,7 +213,7 @@ def create_listing_database(html_path) -> list[tuple]:
             details["location_rating"]
         ))
     return database
-    pass
+    #pass
     # ==============================
     # YOUR CODE ENDS HERE
     # ==============================
@@ -253,7 +252,7 @@ def output_csv(data, filename) -> None:
             clean_title = row[0].split(" Charming")[0].strip()  # remove extra descriptors
             # Write row with cleaned title
             writer.writerow([clean_title] + list(row[1:]))
-    pass
+    #pass
     # ==============================
     # YOUR CODE ENDS HERE
     # ==============================
@@ -294,7 +293,7 @@ def avg_location_rating_by_room_type(data) -> dict:
     for room_type in totals:
         averages[room_type] = round(totals[room_type] / counts[room_type], 1)
     return averages
-    pass
+    #pass
     # ==============================
     # YOUR CODE ENDS HERE
     # ==============================
@@ -316,8 +315,8 @@ def validate_policy_numbers(data) -> list[str]:
     # YOUR CODE STARTS HERE
     # ==============================
     invalid = []
-    pattern1 = r"20\d{2}-00\d{4,6}STR"
-    pattern2 = r"STR-\d{7}"
+    pattern1 = r"20\d{2}-00\d{3,6}STR"
+    pattern2 = r"STR-\d{7}$"
 
     for row in data:
         listing_id = row[1]
@@ -335,7 +334,7 @@ def validate_policy_numbers(data) -> list[str]:
             invalid.append(listing_id)
 
     return invalid
-    pass
+    #pass
     # ==============================
     # YOUR CODE ENDS HERE
     # ==============================
@@ -350,12 +349,16 @@ class TestCases(unittest.TestCase):
         self.detailed_data = create_listing_database(self.search_results_path)
 
     def test_load_listing_results(self):
+        #print("TOTAL LISTINGS:", len(self.listings))
+        #for l in self.listings:
+            #print(l)
 
         # TODO: Check that the number of listings extracted is 18.
         # TODO: Check that the FIRST (title, id) tuple is  ("Loft in Mission District", "1944564").
-        pass
+
         self.assertEqual(len(self.listings), 18)
-        self.assertEqual(self.listings[0], ("Loft in Mission District", "1944564"))    
+        self.assertEqual(self.listings[0], ("Loft in Mission District", "1944564"))
+        #pass    
     
     def test_get_listing_details(self):
         # TODO: Call get_listing_details() on each listing id above and save results in a list.
@@ -371,7 +374,7 @@ class TestCases(unittest.TestCase):
         self.assertEqual(results[2]["1944564"]["host_type"], "Superhost")
         self.assertEqual(results[2]["1944564"]["room_type"], "Entire Room")
         self.assertEqual(results[2]["1944564"]["location_rating"], 4.9)
-        pass
+        #pass
 
     def test_create_listing_database(self):
         # TODO: Check that each tuple in detailed_data has exactly 7 elements:
@@ -385,7 +388,7 @@ class TestCases(unittest.TestCase):
             self.detailed_data[-1],
         ("Guest suite in Mission District", "467507", "STR-0005349", "Superhost", "Jennifer", "Entire Room", 4.8)
     )
-        pass
+        #pass
 
     def test_output_csv(self):
         out_path = os.path.join(self.base_dir, "test.csv")
@@ -422,7 +425,7 @@ class TestCases(unittest.TestCase):
         # TODO: Check that the list contains exactly "16204265" for this dataset.
         invalid_listings = validate_policy_numbers(self.detailed_data)
         self.assertEqual(invalid_listings, ["16204265"])
-        pass
+        #pass
 
 
 def main():
