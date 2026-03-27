@@ -59,7 +59,16 @@ def load_listing_results(html_path) -> list[tuple]:
         if not match:
             continue
 
+        listing_id = match.group(1)
+        if listing_id in seen_ids:
+            continue`
+
         text = a.get_text(strip=True)
+
+        if not text:
+            parent = a.find_parent()
+            if parent:
+                text = parent.get_text(strip=True)
 
         if "·" in text:
             title = text.split("·")[0].strip()
@@ -68,13 +77,11 @@ def load_listing_results(html_path) -> list[tuple]:
 
         if title:
             listings.append((title, listing_id))
+            seen_ids.add(listing_id)
         
         return listings
     
-<<<<<<< HEAD
     
-=======
->>>>>>> fdb8fbbd0c40052d4537a4c04b550a97873d695d
     # ==============================
     # YOUR CODE ENDS HERE
     # ==============================
