@@ -48,34 +48,36 @@ def load_listing_results(html_path) -> list[tuple]:
         soup = BeautifulSoup(f, "html.parser")
     
     listings = []
+    seen_ids = set()
 
     for a in soup.find_all("a", href=True):
         href = a["href"]
-        if "/rooms/" in href:
-            match = re.search(r"/rooms/(\d+)", href)
-            if not match:
-                continue
-            listing_id = match.group(1)
+        if "/rooms/" not in href:
+            continue 
+
+        match = re.search(r"/rooms/(\d+)", href)
+        if not match:
+            continue
+            
+        listing_id = match.group(1)
+        if listing_id in seen_ids:
+            continue
 
             # Use the a tag text itself for title
-            text = a.get_text(" ", strip=True)
+        text = a.get_text(" ", strip=True)
 
             # Sometimes text may be empty, fallback to parent
-            if not text:
-                parent = a.find_parent()
-                if parent:
-                    text = parent.get_text(" ", strip=True)
+        if not text:
+            parent = a.find_parent()
+            if parent:
+                text = parent.get_text(" ", strip=True)
 
             # Clean up extra descriptors after "in"
-            if " in " in text:
-                # Keep up to the first "District" or full phrase
-                if "District" in text:
-                    title = text.split("District")[0] + "District"
-                else:
-                    title = text.split("·")[0].strip()
-            else:
-                title = text.split("·")[0].strip()
-
+        if "·" in text:
+            title = text.split("·")[0].strip()
+        else:
+            title = text.strip()
+        if title:
             listings.append((title, listing_id))
             seen_ids.add(listing_id)
         
