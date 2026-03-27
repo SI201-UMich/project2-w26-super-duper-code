@@ -52,61 +52,24 @@ def load_listing_results(html_path) -> list[tuple]:
 
     for a in soup.find_all("a", href=True):
         href = a["href"]
-        if "/rooms/" in href:
-            match = re.search(r"/rooms/(\d+)", href)
-            if match:
-                listing_id = match.group(1)
+        if "/rooms/" not in href:
+            continue
+        
+        match = re.search(r"/rooms/(\d+)", href)
+        if not match:
+            continue
 
-            # Use the a tag text itself for title
-                if listing_id in seen_ids:
-                    continue
+        text = a.get_text(strip=True)
 
-            title = a.get_text(strip=True)
-
-            # Sometimes text may be empty, fallback to parent
-        if not title:
-            parent = a.find_parent()
-            if parent:
-                title_elem = parent.find (['h1', 'h2', 'h3', 'div'], class_=re.compile(r'title|heading|name'))
-                if title_elem:
-                    title = title_elem.get_text(strip=True)
-                else:
-                    title = parent.get_text(strip=True)
+        if "·" in text:
+            title = text.split("·")[0].strip()
+        else:
+            title = text.strip()
 
         if title:
-            if "·" in title:
-                title = title.split("·")[0].strip()
-            if " in " in title and "District" in title:
-                        
-                pass 
-                
-        if title and listing_id:
             listings.append((title, listing_id))
-            seen_ids.add(listing_id)
-            
-    return listings
-
-            # Clean up extra descriptors after "in"
-            if " in " in text:
-                # Keep up to the first "District" or full phrase
-                if "District" in text:
-                    title = text.split("District")[0] + "District"
-                else:
-                    title = text.split("·")[0].strip()
-            else:
-                title = text.split("·")[0].strip()
-
-            listings.append((title, listing_id))
-
-    # Remove duplicates by listing_id
-    unique = []
-    seen = set()
-    for item in listings:
-        if item[1] not in seen:
-            unique.append(item)
-            seen.add(item[1])
-
-    return unique
+        
+        return listings
     
     # ==============================
     # YOUR CODE ENDS HERE
