@@ -250,9 +250,7 @@ def output_csv(data, filename) -> None:
 
         for row in sorted_data:
             # Clean the listing title
-            clean_title = row[0].split(" Charming")[0].strip()  # remove extra descriptors
-            # Write row with cleaned title
-            writer.writerow([clean_title] + list(row[1:]))
+            writer.writerow(row)
     
     # ==============================
     # YOUR CODE ENDS HERE
