@@ -1,0 +1,12 @@
+Question 1: 
+I think the current system is lacking because enforcement only happens after someone files a complaint. 
+This means hosts can operate illegally for a long time without getting caught unless someone like me goes through listings manually to find violations. 
+The city should make platforms like Airbnb automatically verify policy numbers before allowing listings to go live. 
+That way, the responsibility shifts from regular people reporting problems to the companies actually making money from these rentals. 
+Question 2: 
+One thing that matter legally is whether you need a password to access the data. 
+This matters because if all scraping was illegal, companies could create information monopolies and block investigative research. 
+Question 3: 
+(1) Don't collect more data than you actually need.
+(2) Consider wether the scraping actually helps people or just exploits them. 
+I believe that using data to expose violations like this project is ethical, however, when it comes to mass surveillance, I strongly think that it breaches privacy laws, and is not ok. 
