@@ -1,5 +1,6 @@
 Nahida Sultana
 
+
 1. Accountability in the current system
 I believe that San Francisco's present short-term renting arrangement does not offer sufficient accountability. Although it has several layers (hosts registering with the city, Airbnb displaying policy numbers, and third parties harvesting data) these components don't always cooperate well. For instance, we observed that certain listings in this project had either faulty or missing policy numbers, indicating that Airbnb is not consistently enforcing compliance. This makes it possible for hosts to evade rules without facing repercussions right away.
 Furthermore, the system mostly depends on outside companies to use site scraping and reporting to find infractions. Even though Airbnb has the most direct access to listing data, this takes accountability away from the platform itself. The SWE Code of Ethics states that corporations and developers should act in the public interest and make sure their systems are transparent and dependable. Rather than depending on outside enforcement, Airbnb may increase responsibility by automatically confirming policy numbers before permitting properties to go live. The system would be more efficient and equitable if platform-level accountability were strengthened.
