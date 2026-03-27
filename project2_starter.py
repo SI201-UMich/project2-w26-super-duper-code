@@ -432,3 +432,24 @@ def main():
 if __name__ == "__main__":
     main()
     unittest.main(verbosity=2)
+
+import requests
+from bs4 import BeautifulSoup
+
+def google_scholar_searcher(query) -> list: 
+    query = query.replace(" ", "+")
+    url = f"https://scholar.google.com/scholar?q={query}"
+    headers = {
+        "User-Agent": "Mozilla/5.0"
+
+    }
+
+    response = requests.get(url, headers=headers)
+    soup = BeautifulSoup(response.text, "html.parser")
+    titles = []
+
+    for item in soup.find_all("h3", class_="gs_rt"):
+        title = item.get_text()
+        if title:
+            titles.append(title)
+    return titles
