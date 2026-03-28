@@ -63,18 +63,8 @@ def load_listing_results(html_path) -> list[tuple]:
         if listing_id in seen_ids:
             continue
 
-             
+            # Use the a tag text itself for title
         text = a.get_text(" ", strip=True)
-        if " in " in text: 
-            if "District" in text: 
-                title = text.split("District")[0] + "District"
-            else: 
-                title = text.split(".")[0].strip()
-        else: 
-            title = text.split(".")[0].strip()
-
-            
-
 
             # Sometimes text may be empty, fallback to parent
         if not text:
@@ -182,7 +172,7 @@ def get_listing_details(listing_id) -> dict:
             "location_rating": location_rating
         }
     }
-    
+    pass
     # ==============================
     # YOUR CODE ENDS HERE
     # ==============================
@@ -219,7 +209,7 @@ def create_listing_database(html_path) -> list[tuple]:
             details["location_rating"]
         ))
     return database
-    
+    pass
     # ==============================
     # YOUR CODE ENDS HERE
     # ==============================
@@ -317,7 +307,9 @@ def validate_policy_numbers(data) -> list[str]:
         list[str]: A list of listing_id values whose policy numbers do NOT match the valid format
     """
     # TODO: Implement checkout logic following the instructions
-    import re
+    # ==============================
+    # YOUR CODE STARTS HERE
+    # ==============================
     invalid = []
     pattern1 = r"20\d{2}-00\d{3,6}STR"
     pattern2 = r"STR-\d{7}$"
@@ -330,9 +322,15 @@ def validate_policy_numbers(data) -> list[str]:
         if not (re.fullmatch(pattern1, policy) or re.fullmatch(pattern2, policy)):
             invalid.append(listing_id)
 
-       
+        #if not re.search(r"(20\d{2}-\d{6}STR|STR-\d{7})", policy):
+            #invalid.append(listing_id)
+
+        if not (re.search(pattern1, policy) or re.search(pattern2, policy)):
+            print(listing_id, policy)
+            invalid.append(listing_id)
+
     return invalid
-    
+    pass
     # ==============================
     # YOUR CODE ENDS HERE
     # ==============================
@@ -427,10 +425,7 @@ class TestCases(unittest.TestCase):
 
 
 def main():
-    base_dir = os.path.abspath(os.path.dirname(__file__))
-    file_path = os.path.join(base_dir, "html_files", "search_results.html")
-
-    detailed_data = create_listing_database(file_path)
+    detailed_data = create_listing_database(os.path.join("html_files", "search_results.html"))
     output_csv(detailed_data, "airbnb_dataset.csv")
 
 
