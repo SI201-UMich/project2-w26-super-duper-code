@@ -336,6 +336,29 @@ def validate_policy_numbers(data) -> list[str]:
     # ==============================
 
 
+#EXTRA CREDIT
+def google_scholar_searcher(query) -> list:
+    url = "https://scholar.google.com/scholar"
+    params = {"q": query}
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+    }
+    
+    response = requests.get(url, params=params, headers=headers)
+    soup = BeautifulSoup(response.text, "html.parser")
+    
+    titles = []
+    for result in soup.find_all("h3", class_="gs_rt"):
+        # Strip out any citation tags like
+        for tag in result.find_all("span"):
+            tag.decompose()
+        title = result.get_text(strip=True)
+        if title:
+            titles.append(title)
+    
+    return titles
+
+
 class TestCases(unittest.TestCase):
     def setUp(self):
         self.base_dir = os.path.abspath(os.path.dirname(__file__))
