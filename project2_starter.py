@@ -328,9 +328,6 @@ def validate_policy_numbers(data) -> list[str]:
         #if not re.search(r"(20\d{2}-\d{6}STR|STR-\d{7})", policy):
             #invalid.append(listing_id)
 
-        if not (re.search(pattern1, policy) or re.search(pattern2, policy)):
-            print(listing_id, policy)
-            invalid.append(listing_id)
 
     return invalid
     pass
