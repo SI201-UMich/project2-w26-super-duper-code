@@ -7,6 +7,7 @@
 # e.g.: 
 # Asked ChatGPT for hints on debugging and for suggestions on overall code structure
   #When the code broke or failed, we asked GENAI on how to fix it
+#I asked Genai to explain different approaches I can use to debug
 #
 # Did your use of GenAI on this assignment align with your goals and guidelines in your Gen AI contract? If not, why?
 #yes we did, but only to help guide us and help us with debugging and explanations, we still aligned with our goals by not asking it for exact answers
