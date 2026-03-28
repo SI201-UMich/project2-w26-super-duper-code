@@ -63,20 +63,23 @@ def load_listing_results(html_path) -> list[tuple]:
         if listing_id in seen_ids:
             continue
 
-            # Use the a tag text itself for title
-        text = a.get_text(" ", strip=True)
-
-            # Sometimes text may be empty, fallback to parent
-        if not text:
-            parent = a.find_parent()
-            if parent:
-                text = parent.get_text(" ", strip=True)
-
-            # Clean up extra descriptors after "in"
-        if "·" in text:
-            title = text.split("·")[0].strip()
-        else:
-            title = text.strip()
+        title = ""
+        #try aria lable on the <a> tag
+        aria = a.get("aria-label", "")
+        if aria:
+            title = aria.strip()
+        #search child tags for type in location pattern
+        if not title:
+            for tag in a.find_all(True):
+                text = tag.get_text(" ", strip=True)
+                if re.match(r"^[A-Z][a-zA-Z\s]+ in [A-Z][a-zA-Z\s]+$", text):
+                    title = text; break
+        #fallback: regex on full link text
+        if not title:
+            full_text = a.get_text(" ", strip=True)
+            m = re.search(r"([A-Z][a-zA-Z\s]+ in [A-Z][a-zA-Z\s,]+?)(?:\s*·|\s{2,}|$)", full_text)
+            if m: title = m.group(1).strip()
+        #append title to listings if we found one and haven't seen this id before
         if title:
             listings.append((title, listing_id))
             seen_ids.add(listing_id)
@@ -311,7 +314,7 @@ def validate_policy_numbers(data) -> list[str]:
     # YOUR CODE STARTS HERE
     # ==============================
     invalid = []
-    pattern1 = r"20\d{2}-00\d{3,6}STR"
+    pattern1 = r"20\d{2}-00\d{4}STR" #exactly 4 digits
     pattern2 = r"STR-\d{7}$"
 
     for row in data:
