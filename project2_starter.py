@@ -432,9 +432,7 @@ def main():
 if __name__ == "__main__":
     main()
     unittest.main(verbosity=2)
-
-import requests
-from bs4 import BeautifulSoup
+ 
 
 def google_scholar_searcher(query) -> list: 
     query = query.replace(" ", "+")
