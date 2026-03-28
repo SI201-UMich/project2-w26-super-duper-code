@@ -49,45 +49,46 @@ def load_listing_results(html_path) -> list[tuple]:
         soup = BeautifulSoup(f, "html.parser")
     
     listings = []
-    seen_ids = set()
 
     for a in soup.find_all("a", href=True):
         href = a["href"]
-        if "/rooms/" not in href:
-            continue 
+        if "/rooms/" in href:
+            match = re.search(r"/rooms/(\d+)", href)
+            if not match:
+                continue
+            listing_id = match.group(1)
 
-        match = re.search(r"/rooms/(\d+)", href)
-        if not match:
-            continue
-            
-        listing_id = match.group(1)
-        if listing_id in seen_ids:
-            continue
+            # Use the a tag text itself for title
+            text = a.get_text(" ", strip=True)
 
-        title = ""
-        #try aria lable on the <a> tag
-        aria = a.get("aria-label", "")
-        if aria:
-            title = aria.strip()
-        #search child tags for type in location pattern
-        if not title:
-            for tag in a.find_all(True):
-                text = tag.get_text(" ", strip=True)
-                if re.match(r"^[A-Z][a-zA-Z\s]+ in [A-Z][a-zA-Z\s]+$", text):
-                    title = text; break
-        #fallback: regex on full link text
-        if not title:
-            full_text = a.get_text(" ", strip=True)
-            m = re.search(r"([A-Z][a-zA-Z\s]+ in [A-Z][a-zA-Z\s,]+?)(?:\s*·|\s{2,}|$)", full_text)
-            if m: title = m.group(1).strip()
-        #append title to listings if we found one and haven't seen this id before
-        if title:
+            # Sometimes text may be empty, fallback to parent
+            if not text:
+                parent = a.find_parent()
+                if parent:
+                    text = parent.get_text(" ", strip=True)
+
+            # Clean up extra descriptors after "in"
+            if " in " in text:
+                # Keep up to the first "District" or full phrase
+                if "District" in text:
+                    title = text.split("District")[0] + "District"
+                else:
+                    title = text.split("·")[0].strip()
+            else:
+                title = text.split("·")[0].strip()
+
             listings.append((title, listing_id))
-            seen_ids.add(listing_id)
-        
-    return listings
-    
-    
+
+    # Remove duplicates by listing_id
+    unique = []
+    seen = set()
+    for item in listings:
+        if item[1] not in seen:
+            unique.append(item)
+            seen.add(item[1])
+
+    return unique
+    pass
     # ==============================
     # YOUR CODE ENDS HERE
     # ==============================
@@ -315,7 +316,7 @@ def validate_policy_numbers(data) -> list[str]:
     # YOUR CODE STARTS HERE
     # ==============================
     invalid = []
-    pattern1 = r"20\d{2}-00\d{4}STR" #exactly 4 digits
+    pattern1 = r"20\d{2}-00\d{3,6}STR"
     pattern2 = r"STR-\d{7}$"
 
     for row in data:
@@ -329,35 +330,15 @@ def validate_policy_numbers(data) -> list[str]:
         #if not re.search(r"(20\d{2}-\d{6}STR|STR-\d{7})", policy):
             #invalid.append(listing_id)
 
+        if not (re.search(pattern1, policy) or re.search(pattern2, policy)):
+            print(listing_id, policy)
+            invalid.append(listing_id)
 
     return invalid
     pass
     # ==============================
     # YOUR CODE ENDS HERE
     # ==============================
-
-
-#EXTRA CREDIT
-def google_scholar_searcher(query) -> list:
-    url = "https://scholar.google.com/scholar"
-    params = {"q": query}
-    headers = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
-    }
-    
-    response = requests.get(url, params=params, headers=headers)
-    soup = BeautifulSoup(response.text, "html.parser")
-    
-    titles = []
-    for result in soup.find_all("h3", class_="gs_rt"):
-        # Strip out any citation tags like
-        for tag in result.find_all("span"):
-            tag.decompose()
-        title = result.get_text(strip=True)
-        if title:
-            titles.append(title)
-    
-    return titles
 
 
 class TestCases(unittest.TestCase):
